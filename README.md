@@ -17,4 +17,5 @@ module instead of trying to create a new module with the stuff in it.
 
 ### Couple of issues
 
-- No handling of references to functions (ie, pthread_create(.,.,&function,.))
+- Not yet handling other references to functions (eg, pthread_create(.,.,&function,.))
+- Probably just awful in general. Could benefit from lambda
