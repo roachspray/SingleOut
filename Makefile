@@ -22,6 +22,7 @@ LIBS=$(shell $(LLVM_CONFIG) --libs)
 PASS=libSingleOut.so
 PASS_OBJECTS=SingleOutPass.o  \
   NoCallFunctionSieve.o  \
+  PossiblyCheck.o  \
   SeahornBodyRock.o
 
 default: prep $(PASS)
