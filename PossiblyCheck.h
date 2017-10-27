@@ -13,9 +13,11 @@ struct PossiblyCheck : ModulePass {
 private:
 	static bool scCheckAll(Function *);
 	static bool scCheckNone(Function *);
+	static bool scCheckCyclo(Function *);
 	std::map<std::string, shouldCheck> shouldCheckMap = {
 		std::make_pair("check all", scCheckAll),
-		std::make_pair("check none", scCheckNone)
+		std::make_pair("check none", scCheckNone),
+		std::make_pair("check by cyclo-complexity", scCheckCyclo)
 	};
 };
 #endif
