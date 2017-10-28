@@ -1,0 +1,80 @@
+#!/usr/bin/python
+
+# target app dir
+
+import sys
+import os
+import fnmatch
+import json
+import subprocess
+
+def main():
+  # By configuration, os.getcwd() gives us the Module dir
+  modDir = os.getcwd()
+
+  # Find all the android_gradle_build.json files
+  agb = []
+  for root, dns, fns in os.walk(modDir):
+    for fn in fnmatch.filter(fns, 'android_gradle_build.json'):
+      agb.append(os.path.join(root, fn))
+
+  if len(agb) == 0:
+    print "Failed to find any android_gradle_build.json file to work with."
+    print "You may need to build your project first, or fix the config of tool"
+    sys.exit(1)
+
+  
+  jpath = agb[0]
+  with open(jpath, "r") as joh:
+    job = json.load(joh)
+    cfext = []
+    try:
+      cfext = job["cFileExtensions"]
+    except:
+      pass
+    cppfext = []
+    try:
+      cppfext = job["cppFileExtensions"]
+    except:
+      pass
+
+    firstchain = job["toolchains"].keys()[0]    
+#    clang = job["toolchains"][firstchain]["cCompilerExecutable"]
+#    clangpp = job["toolchains"][firstchain]["cppCompilerExecutable"]
+
+    clang = '/usr/lib/llvm-4.0/bin/clang'
+    clangpp = '/usr/lib/llvm-4.0/bin/clang++'
+    opt_bin = '/usr/lib/llvm-4.0/bin/opt'
+
+
+    for libs in job["libraries"].keys():
+      jf = job["libraries"][libs]["files"]
+      for fi in jf:
+        comp = None
+        if fi["src"].split(".")[-1] in cfext:
+          comp = clang
+        elif fi["src"].split(".")[-1] in cppfext:
+          comp = clangpp
+        else:
+          print "Failed to get compiler for {}".format(fi["src"])
+          sys.exit(1) 
+       
+        args = [comp] 
+        args.extend(fi["flags"].split(" "))
+        args.append("-emit-llvm")
+        args.append("-o")
+        args.append("poschk.bc")
+        args.append(fi["src"])
+        subprocess.check_output(args) 
+        subprocess.check_output([opt_bin,
+          "-load", 
+          "/home/areiter/SingleOut/build/lib/libSingleOut.so",
+          "-possibly-check",
+          "-o",
+          "/dev/null",
+          os.path.join(modDir, "poschk.bc")])
+
+  sys.exit(0)
+
+if __name__ == '__main__':
+  main()
