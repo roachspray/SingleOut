@@ -1,4 +1,4 @@
-LLBIN=/usr/lib/llvm-3.8/bin
+LLBIN=/usr/lib/llvm-4.0/bin
 LLVM_CONFIG=$(LLBIN)/llvm-config
 LDIS=$(LLBIN)/llvm-dis
 CPP=$(LLBIN)/clang++

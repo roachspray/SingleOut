@@ -11,6 +11,8 @@ struct PossiblyCheck : ModulePass {
 	virtual bool runOnModule(Module &);
 
 private:
+
+	// Worth breaking out; this is just a hack to make go.
 	static bool scCheckAll(Function *);
 	static bool scCheckNone(Function *);
 	static bool scCheckCyclo(Function *);
