@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# There are hardcoded paths... sorry :(
+
 # target app dir
 
 import sys
