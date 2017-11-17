@@ -65,7 +65,7 @@ PossiblyCheck::runOnModule(Module &M)
 {
 	
 	for (Function &F : M) {
-		if (F.hasName() == false) {
+		if (F.isIntrinsic() || F.isDeclaration() || F.hasName() == false) {
 			continue;
 		}
 		std::string Fname = F.getName().str();
