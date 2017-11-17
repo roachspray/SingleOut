@@ -41,9 +41,9 @@ PossiblyCheck::scCheckCyclo(Function *F)
 	 * M = E - N + 2C;
 	 *
 	 */
-	unsigned nEdges = 0;                            // E
-	unsigned nNodes = 0;                            // N
-	unsigned nConnectedComponents = 1;      // C
+	unsigned nEdges = 0;				// E
+	unsigned nNodes = 0;				// N
+	unsigned nConnectedComponents = 1;	// C
 
 	nNodes = std::distance(F->begin(), F->end());
 	for (BasicBlock &BB : *F) {
@@ -51,8 +51,10 @@ PossiblyCheck::scCheckCyclo(Function *F)
 		nEdges += std::distance(succ_begin(b), succ_end(b));
 	}
 	unsigned v = (nEdges - nNodes + (2 * nConnectedComponents));
+
+/* Make tunable */
 #define ARBITRARY_CCBAR	10
-    if (v > 10) {
+	if (v > 10) {
 		return true;
 	}
 	return false;
