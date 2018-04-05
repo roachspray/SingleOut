@@ -1,3 +1,9 @@
+This is a serious pile of random passes (or becomming one). Initially it was to 
+aid the work in Shoehorn project... reducing a bitcode file to a single function.
+Now it has some code related to tagging instructions that match a certain file/line
+pairing from a file. And another to use that tagging to insert code.
+
+One day these would be organized, if I were to have my way.
 
 ## Toys
 

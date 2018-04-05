@@ -1,4 +1,4 @@
-LLBIN=/usr/lib/llvm-4.0/bin
+LLBIN=/usr/lib/llvm-3.8/bin
 LLVM_CONFIG=$(LLBIN)/llvm-config
 LDIS=$(LLBIN)/llvm-dis
 CPP=$(LLBIN)/clang++
@@ -23,6 +23,7 @@ PASS=libSingleOut.so
 PASS_OBJECTS=SingleOutPass.o  \
   NoCallFunctionSieve.o  \
   FindInstructionsByLocation.o  \
+  InjectPutsByMDTag.o \
   PossiblyCheck.o  \
   SeahornBodyRock.o
 
