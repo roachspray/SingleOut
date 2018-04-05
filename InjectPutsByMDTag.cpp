@@ -30,35 +30,40 @@ InjectPutsByMDTag::runOnModule(Module &M)
 	Function *pf = cast<Function>(cpf);
 	pf->setCallingConv(CallingConv::C);
 
-	Constant *outStr = ConstantDataArray::getString(C, "__HI__", true);
-	GlobalVariable *gvOutStr = new GlobalVariable(M,
-	  outStr->getType(), true,
-	  GlobalValue::PrivateLinkage, outStr);
-	std::string naming = "__INJECT_STR";
-	gvOutStr->setName(naming);
-	gvOutStr->setAlignment(1);
+
+	unsigned cnt = 0;
 
 	// I'm guessing there is a better way to do this, but that is not my current concern
 	for (Function &F :  M) {
 		for (BasicBlock &B : F) {
 			for (Instruction &I: B) {
 				if (I.hasMetadata() && I.getMetadata("SLICE") != NULL) {
-	ArrayType *at = ArrayType::get(Type::getInt8Ty(C), naming.size()+1);
-	std::vector<Value *> idxs;
-	idxs.push_back(
-	  Constant::getIntegerValue(Type::getInt32Ty(C),
-	  APInt(32, 0, false))
-	);
-   	idxs.push_back(
-   	  Constant::getIntegerValue(Type::getInt32Ty(C),
-	  APInt(32, 0, false))
-	);
-	Constant *useGv = ConstantExpr::getInBoundsGetElementPtr(at,
-	  gvOutStr, idxs);
-	CallInst::Create(pf,
-   		{ useGv },
-	       Twine::createNull(),
-   		&I);
+					std::string gs = "__HI__" + std::to_string(cnt);
+					Constant *outStr = ConstantDataArray::getString(C, gs, true);
+					GlobalVariable *gvOutStr = new GlobalVariable(M,
+					  outStr->getType(), true,
+					  GlobalValue::PrivateLinkage, outStr);
+					std::string naming = "__INJECT_STR_"+std::to_string(cnt);
+					gvOutStr->setName(naming);
+					gvOutStr->setAlignment(1);
+					++cnt;
+
+					ArrayType *at = ArrayType::get(Type::getInt8Ty(C), naming.size()+1);
+					std::vector<Value *> idxs;
+					idxs.push_back(
+					  Constant::getIntegerValue(Type::getInt32Ty(C),
+					  APInt(32, 0, false))
+					);
+				   	idxs.push_back(
+				   	  Constant::getIntegerValue(Type::getInt32Ty(C),
+					  APInt(32, 0, false))
+					);
+					Constant *useGv = ConstantExpr::getInBoundsGetElementPtr(at,
+					  gvOutStr, idxs);
+					CallInst::Create(pf,
+			    		{ useGv },
+				       Twine::createNull(),
+			   		&I);
 					
 				}
 			}
