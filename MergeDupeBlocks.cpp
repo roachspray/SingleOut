@@ -11,6 +11,7 @@
 #include "llvm/Support/BranchProbability.h"
 #include "llvm/IR/CFG.h"
 #include "llvm/ADT/Hashing.h"
+#include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
 #include <iostream>
 #include <fstream>
@@ -59,6 +60,7 @@ bool
 MergeDupeBlocks::runOnModule(Module &M)
 {
 
+	std::vector<BasicBlock *> killList;
 	for (Function &F :  M) {
 		if (F.isDeclaration()) {
 			continue;
@@ -107,8 +109,22 @@ MergeDupeBlocks::runOnModule(Module &M)
 
 			}			
 		}
+		unsigned i = 0;
+		for (BasicBlock &B : F) {
+			if (i == 0) {
+				i++;
+				continue;
+			}
+			if (std::distance(pred_begin(&B), pred_end(&B)) == 0 ) {
+				killList.push_back(&B);
+			}
+		}
 	}
-	return false;
+	for (auto it = killList.begin(); it != killList.end(); ++it) {
+		BasicBlock *BB = *it;
+		DeleteDeadBlock(BB);
+	}
+	return true;
 }
 
 char MergeDupeBlocks::ID = 0;
